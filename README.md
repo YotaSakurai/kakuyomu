@@ -7,6 +7,7 @@
 | # | タイトル | ジャンル | ステータス | 企画書 | Pages |
 |---|---------|---------|-----------|--------|-------|
 | 1 | 死に戻りの図書館司書は、世界の終わりを何度でも書き換える | 現代ファンタジー × ミステリー × ループもの | 企画中 | [README](./series/shinimodori/README.md) | [HTML](https://YotaSakurai.github.io/kakuyomu/shinimodori/) |
+| 2 | 魔王と勇者の経理部 ─ 剣と魔法より電卓が強い件について ─ | 異世界ファンタジー × お仕事コメディ | 企画中 | [README](./series/maou-yuusha/README.md) | [HTML](https://YotaSakurai.github.io/kakuyomu/maou-yuusha/) |
 
 ## ディレクトリ構成
 

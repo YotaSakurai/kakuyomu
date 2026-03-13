@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>魔王と勇者の経理部 ── カクヨム企画書</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f8f5f0;
+    --accent: #6b4c3b;
+    --accent-light: #a67c5b;
+    --red: #c0392b;
+    --blue: #2c5f7c;
+    --green: #3a7d5c;
+    --gold: #b8860b;
+    --purple: #6c3483;
+    --orange: #d35400;
+    --tag-bg: rgba(107,76,59,0.08);
+    --shadow: 0 2px 20px rgba(26,26,46,0.08);
+    --radius: 10px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Zen Kaku Gothic New', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.85; font-size: 15px; min-height: 100vh; }
+  .hero { background: linear-gradient(135deg, #2c1810 0%, #5c3a28 50%, #8b4513 100%); color: #fff; padding: 3rem 1.5rem 2.5rem; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30h60M30 0v60' stroke='%23ffffff08' stroke-width='1'/%3E%3C/svg%3E"); opacity: 0.5; }
+  .hero-icon { font-size: 3rem; margin-bottom: 0.5rem; position: relative; }
+  .hero h1 { font-family: 'Noto Serif JP', serif; font-weight: 900; font-size: clamp(1.4rem, 5vw, 2rem); letter-spacing: 0.05em; position: relative; text-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+  .hero .subtitle { font-size: 0.85rem; opacity: 0.7; margin-top: 0.5rem; position: relative; }
+  .hero .back-link { position: relative; display: inline-block; margin-top: 1rem; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.8rem; }
+  .hero .back-link:hover { color: #fff; }
+  .nav { position: sticky; top: 0; z-index: 100; background: rgba(248,245,240,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(107,76,59,0.12); overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-inner { display: flex; gap: 0; padding: 0 0.5rem; max-width: 800px; margin: 0 auto; }
+  .nav a { display: block; padding: 0.75rem 1rem; text-decoration: none; color: var(--accent); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.03em; border-bottom: 2px solid transparent; transition: all 0.2s; flex-shrink: 0; }
+  .nav a:hover, .nav a:active { border-bottom-color: var(--accent); background: var(--tag-bg); }
+  .container { max-width: 800px; margin: 0 auto; padding: 0 1rem 4rem; }
+  section { margin-top: 2.5rem; animation: fadeUp 0.6s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .section-label { font-family: 'Noto Serif JP', serif; font-weight: 900; font-size: 1.2rem; color: var(--accent); border-left: 4px solid var(--accent); padding-left: 0.75rem; margin-bottom: 1.2rem; letter-spacing: 0.05em; }
+  .title-candidate { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.2rem; margin-bottom: 0.75rem; border-left: 4px solid var(--accent-light); }
+  .title-candidate:first-of-type { border-left-color: var(--gold); background: linear-gradient(135deg, #fffef5, #fff8eb); }
+  .title-candidate .label { font-size: 0.7rem; font-weight: 700; color: var(--accent-light); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+  .title-candidate:first-of-type .label { color: var(--gold); }
+  .title-candidate .title-text { font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 1.05rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.8rem; }
+  .tag { background: var(--tag-bg); color: var(--accent); font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 100px; }
+  .synopsis { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.5rem; border: 1px solid rgba(107,76,59,0.06); font-size: 0.95rem; line-height: 2; color: #333; }
+  .synopsis .highlight { background: linear-gradient(transparent 60%, rgba(184,134,11,0.15) 60%); font-weight: 700; }
+  .char-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.2rem; margin-bottom: 0.75rem; border: 1px solid rgba(107,76,59,0.06); position: relative; overflow: hidden; }
+  .char-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
+  .char-card:nth-child(1)::before { background: var(--gold); }
+  .char-card:nth-child(2)::before { background: var(--purple); }
+  .char-card:nth-child(3)::before { background: var(--red); }
+  .char-card:nth-child(4)::before { background: var(--ink); }
+  .char-card:nth-child(5)::before { background: var(--blue); }
+  .char-name { font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
+  .char-role { font-size: 0.72rem; font-weight: 700; color: #fff; padding: 0.15rem 0.6rem; border-radius: 100px; display: inline-block; margin-bottom: 0.5rem; }
+  .char-card:nth-child(1) .char-role { background: var(--gold); }
+  .char-card:nth-child(2) .char-role { background: var(--purple); }
+  .char-card:nth-child(3) .char-role { background: var(--red); }
+  .char-card:nth-child(4) .char-role { background: var(--ink); }
+  .char-card:nth-child(5) .char-role { background: var(--blue); }
+  .char-desc { font-size: 0.88rem; color: #555; }
+  .wc-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  .wc-table thead th { background: var(--ink); color: #fff; padding: 0.7rem 0.6rem; font-size: 0.78rem; font-weight: 700; text-align: left; }
+  .wc-table tbody td { padding: 0.65rem 0.6rem; border-bottom: 1px solid #eee; vertical-align: top; }
+  .wc-table tbody tr:last-child td { border-bottom: none; }
+  .wc-table tbody tr:nth-child(even) { background: #fafaf7; }
+  .wc-table .total-row { background: linear-gradient(135deg, #fffef5, #fff8eb) !important; font-weight: 700; }
+  .wc-table .total-row td { color: var(--red); }
+  .fuse-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 1rem; overflow: hidden; border: 1px solid rgba(107,76,59,0.06); }
+  .fuse-header { padding: 0.8rem 1rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; gap: 0.5rem; }
+  .fuse-header:active { background: #f5f2ed; }
+  .fuse-id { font-family: monospace; font-size: 0.72rem; color: #999; flex-shrink: 0; }
+  .fuse-name { font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 0.95rem; flex: 1; min-width: 0; }
+  .fuse-badges { display: flex; gap: 0.3rem; flex-shrink: 0; }
+  .fuse-badge { font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 100px; color: #fff; white-space: nowrap; }
+  .badge-core { background: var(--red); }
+  .badge-char { background: var(--green); }
+  .badge-world { background: var(--blue); }
+  .badge-mislead { background: var(--gold); }
+  .badge-theme { background: var(--purple); }
+  .badge-struct { background: var(--orange); }
+  .badge-3 { background: #e74c3c; }
+  .badge-2 { background: #f39c12; }
+  .badge-1 { background: #27ae60; }
+  .fuse-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+  .fuse-body.open { max-height: 600px; }
+  .fuse-content { padding: 0 1rem 1rem; }
+  .fuse-step { display: flex; gap: 0.6rem; margin-bottom: 0.8rem; font-size: 0.85rem; }
+  .fuse-step:last-child { margin-bottom: 0; }
+  .fuse-dot-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; padding-top: 0.15rem; }
+  .fuse-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .fuse-line { width: 2px; flex: 1; min-height: 20px; background: #ddd; margin-top: 4px; }
+  .step-hint .fuse-dot { background: var(--accent-light); }
+  .step-mid .fuse-dot { background: var(--gold); }
+  .step-reveal .fuse-dot { background: var(--red); }
+  .fuse-step-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.15rem; }
+  .step-hint .fuse-step-label { color: var(--accent-light); }
+  .step-mid .fuse-step-label { color: var(--gold); }
+  .step-reveal .fuse-step-label { color: var(--red); }
+  .fuse-step-ep { font-weight: 700; color: var(--ink); }
+  .fuse-step-text { color: #555; }
+  .fuse-related { font-size: 0.78rem; color: #888; border-top: 1px dashed #ddd; padding-top: 0.6rem; margin-top: 0.4rem; }
+  .chevron { transition: transform 0.3s; color: #aaa; font-size: 0.9rem; flex-shrink: 0; }
+  .chevron.open { transform: rotate(180deg); }
+  .tl-item { display: flex; gap: 0.8rem; margin-bottom: 0.5rem; font-size: 0.85rem; }
+  .tl-ep { font-family: monospace; font-weight: 700; color: var(--accent); flex-shrink: 0; width: 50px; text-align: right; padding-top: 0.15rem; }
+  .tl-bar-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+  .tl-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); background: #fff; flex-shrink: 0; }
+  .tl-dot.filled { background: var(--accent); }
+  .tl-line-v { width: 2px; flex: 1; background: #ddd; }
+  .tl-content { flex: 1; padding-bottom: 1.2rem; }
+  .tl-title { font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.15rem; }
+  .tl-desc { color: #666; font-size: 0.82rem; }
+  .tl-fuse { font-size: 0.72rem; color: var(--accent-light); margin-top: 0.2rem; font-weight: 700; }
+  .tl-heat { display: flex; gap: 2px; margin-top: 0.3rem; }
+  .tl-heat-block { width: 14px; height: 6px; border-radius: 2px; background: #e0ddd5; }
+  .tl-heat-block.on { background: var(--red); }
+  .tl-divider { text-align: center; padding: 0.6rem 0; font-size: 0.75rem; font-weight: 700; color: var(--accent-light); letter-spacing: 0.15em; }
+  .sp-item { background: #fff; border-radius: var(--radius); padding: 1rem 1.2rem; margin-bottom: 0.6rem; box-shadow: var(--shadow); font-size: 0.9rem; border-left: 3px solid var(--gold); }
+  .series-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  .series-table thead th { background: #5c3a28; color: #fff; padding: 0.7rem 0.6rem; font-size: 0.78rem; font-weight: 700; text-align: left; }
+  .series-table tbody td { padding: 0.65rem 0.6rem; border-bottom: 1px solid #eee; }
+  .series-table tbody tr:nth-child(even) { background: #fafaf7; }
+  .series-table tbody tr:first-child { background: linear-gradient(135deg, #fffef5, #fff8eb); font-weight: 700; }
+  .series-table .status { font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 100px; color: #fff; }
+  .status-active { background: var(--red); }
+  .status-plan { background: #aaa; }
+  .footer { text-align: center; padding: 2rem 1rem; font-size: 0.75rem; color: #aaa; border-top: 1px solid #e8e4dc; margin-top: 3rem; }
+  @media (min-width: 600px) { .container { padding: 0 2rem 4rem; } }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-icon">🧮</div>
+  <h1>魔王と勇者の経理部</h1>
+  <div class="subtitle">剣と魔法より電卓が強い件について</div>
+  <a class="back-link" href="../">← 連載一覧に戻る</a>
+</div>
+<nav class="nav"><div class="nav-inner">
+  <a href="#titles">タイトル</a><a href="#synopsis">あらすじ</a><a href="#characters">キャラ</a>
+  <a href="#wordcount">文字数</a><a href="#foreshadow">伏線</a><a href="#timeline">構成</a><a href="#series">部署シリーズ</a><a href="#selling">強み</a>
+</div></nav>
+<div class="container">
+
+  <section id="titles">
+    <div class="section-label">タイトル案</div>
+    <div class="title-candidate"><div class="label">★ 推奨</div><div class="title-text">『魔王と勇者の経理部 ─ 剣と魔法より電卓が強い件について ─』</div></div>
+    <div class="title-candidate"><div class="label">第2案</div><div class="title-text">『勇者の経費は自腹です ─ 魔王軍経理部の異世界キャリア ─』</div></div>
+    <div class="title-candidate"><div class="label">第3案</div><div class="title-text">『魔王城の帳簿は赤字で書かれる ～元勇者は領収書で世界を救う～』</div></div>
+    <div class="tags">
+      <span class="tag">異世界ファンタジー</span><span class="tag">お仕事コメディ</span><span class="tag">ヒューマンドラマ</span>
+      <span class="tag">魔王</span><span class="tag">勇者</span><span class="tag">経理</span>
+      <span class="tag">バディもの</span><span class="tag">部署シリーズ</span>
+    </div>
+  </section>
+
+  <section id="synopsis">
+    <div class="section-label">あらすじ</div>
+    <div class="synopsis">
+      かつて世界を救った勇者・<strong>橘 光司</strong>（たちばな こうじ）は、魔王を倒した翌日に知らされる──<span class="highlight">「勇者活動にかかった経費32億ゴルド、勇者本人に請求します」</span>。<br><br>
+      冒険中に壊した橋、焼いた森、吹き飛ばした城壁──すべてに損害賠償が発生していた。破産寸前の光司に届いたのは、意外にも<span class="highlight">魔王城・経理部からの採用通知</span>。<br><br>
+      「お前の破壊行為の損害額を、お前自身に計算させてやる」──復活した魔王・<strong>ゼルドリス</strong>は、勇者を殺すのではなく<span class="highlight">雇うことで復讐</span>しようとしていた。<br><br>
+      しかし経理部で働き始めた光司が見たものは、<span class="highlight">ブラックすぎる魔王軍の内部事情</span>だった。水増し請求する幹部、闇予算で私腹を肥やす四天王、そして魔王城の財政は実質<strong>破綻寸前</strong>。<br><br>
+      かくして元勇者は、電卓と帳簿を武器に、魔王軍の財政再建に挑む。敵だったはずの魔王とバディを組み、腐敗した幹部を監査で斬り、そして二人は気づく──<br><br>
+      <em style="color:var(--red);font-weight:700;">この世界の本当の敵は、剣では倒せない。</em>
+    </div>
+  </section>
+
+  <section id="characters">
+    <div class="section-label">主要キャラクター</div>
+    <div class="char-card"><span class="char-role">主人公</span><div class="char-name">橘 光司（たちばな こうじ）</div><div class="char-desc">24歳男性。元勇者。剣聖級の実力者だったが、冒険中の経費問題で全財産を失う。実は孤児院育ちで数字に強く、そろばん塾に通っていた過去がある。「剣より電卓のほうが人を救える」と本気で信じ始める。</div></div>
+    <div class="char-card"><span class="char-role">魔王</span><div class="char-name">ゼルドリス</div><div class="char-desc">外見年齢30歳。第147代魔王。勇者に敗北後、「武力では人間に勝てない」と悟り、経済戦争による支配を画策。しかし実態は自軍の汚職に頭を抱えている苦労人。先代魔王（父）の浪費のツケを背負っている。</div></div>
+    <div class="char-card"><span class="char-role">経理部副部長</span><div class="char-name">リリス・フォン・シュヴァルツ</div><div class="char-desc">外見年齢25歳のサキュバス。経理部を実質的に仕切るキャリアウーマン。冷徹に見えるが、経理部員たちを家族のように守る。300年間経理部を守り続けている長寿種。</div></div>
+    <div class="char-card"><span class="char-role">四天王筆頭</span><div class="char-name">ガルドス</div><div class="char-desc">魔王軍の最高幹部。軍事予算の8割を握り、闇予算で私腹を肥やしている──ように見えるが、実は戦死した部下の遺族を私的に支援するためだった。</div></div>
+    <div class="char-card"><span class="char-role">王国側キャラ</span><div class="char-name">アリア</div><div class="char-desc">22歳女性。光司のかつての仲間で元魔法使い。現在は王国財務省勤務。王国側にも巨大な不正会計があることに気づき始める。シリーズ「広報部」の主人公候補。</div></div>
+  </section>
+
+  <section id="wordcount">
+    <div class="section-label">文字数・構成ガイド</div>
+    <table class="wc-table">
+      <thead><tr><th>区分</th><th>話数</th><th>1話あたり</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td>第1章：採用面接</td><td>第1～5話</td><td>2,000〜2,500字</td><td>コメディ全振り。勇者→経理部員</td></tr>
+        <tr><td>第2章：新人研修</td><td>第6～15話</td><td>2,500〜3,500字</td><td>魔王軍の仕組み＝世界観説明</td></tr>
+        <tr><td>第3章：初めての監査</td><td>第16～25話</td><td>3,000〜3,500字</td><td>小隊長の不正を暴く</td></tr>
+        <tr><td>第4章：四天王の闇予算</td><td>第26～35話</td><td>3,000〜4,000字</td><td>味方と敵の境界が曖昧に</td></tr>
+        <tr><td>第5章：大決算</td><td>第36～45話</td><td>3,500〜4,500字</td><td>全伏線が動き出す</td></tr>
+        <tr><td>最終章：新しい帳簿</td><td>第46～50話</td><td>4,000〜5,000字</td><td>真の敵の正体と選択</td></tr>
+        <tr class="total-row"><td>合計目安</td><td>全45～50話</td><td>総文字数 14〜18万字</td><td>書籍化＋シリーズ展開</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="foreshadow">
+    <div class="section-label">伏線管理テーブル</div>
+
+    <div class="fuse-card">
+      <div class="fuse-header" onclick="toggle(this)">
+        <span class="fuse-id">F-001</span><span class="fuse-name">勇者経費32億ゴルドの内訳</span>
+        <div class="fuse-badges"><span class="fuse-badge badge-core">核心</span><span class="fuse-badge badge-3">★★★</span></div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="fuse-body"><div class="fuse-content">
+        <div class="fuse-step step-hint"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">提示</div><span class="fuse-step-ep">第1話</span> <span class="fuse-step-text">請求書の総額だけが示される。光司は内訳を確認できない</span></div></div>
+        <div class="fuse-step step-mid"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">中間ヒント</div><span class="fuse-step-ep">第20話</span> <span class="fuse-step-text">経費の一部に「該当する破壊活動なし」の項目がある</span></div></div>
+        <div class="fuse-step step-reveal"><div class="fuse-dot-wrap"><div class="fuse-dot"></div></div><div><div class="fuse-step-label">回収</div><span class="fuse-step-ep">第42話</span> <span class="fuse-step-text">32億の半分は王国側の架空請求。勇者制度自体が利権構造だった</span></div></div>
+        <div class="fuse-related">🔗 関連：F-008, F-010と連動</div>
+      </div></div>
+    </div>
+
+    <div class="fuse-card">
+      <div class="fuse-header" onclick="toggle(this)">
+        <span class="fuse-id">F-002</span><span class="fuse-name">先代魔王の負債</span>
+        <div class="fuse-badges"><span class="fuse-badge badge-char">キャラ</span><span class="fuse-badge badge-3">★★★</span></div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="fuse-body"><div class="fuse-content">
+        <div class="fuse-step step-hint"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">提示</div><span class="fuse-step-ep">第3話</span> <span class="fuse-step-text">ゼルドリスが「父の代から続く借金」と溜息をつく</span></div></div>
+        <div class="fuse-step step-mid"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">中間ヒント</div><span class="fuse-step-ep">第15話</span> <span class="fuse-step-text">先代魔王の時代に巨額の「人間界工作費」が支出されていた</span></div></div>
+        <div class="fuse-step step-reveal"><div class="fuse-dot-wrap"><div class="fuse-dot"></div></div><div><div class="fuse-step-label">回収</div><span class="fuse-step-ep">第38話</span> <span class="fuse-step-text">先代魔王は人間と共存しようとして王国貴族に贈賄していた。平和のための負債</span></div></div>
+        <div class="fuse-related">🔗 関連：F-008と連動</div>
+      </div></div>
+    </div>
+
+    <div class="fuse-card">
+      <div class="fuse-header" onclick="toggle(this)">
+        <span class="fuse-id">F-003</span><span class="fuse-name">経理部の金庫の奥</span>
+        <div class="fuse-badges"><span class="fuse-badge badge-world">世界観</span><span class="fuse-badge badge-3">★★★</span></div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="fuse-body"><div class="fuse-content">
+        <div class="fuse-step step-hint"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">提示</div><span class="fuse-step-ep">第2話</span> <span class="fuse-step-text">「開かずの第三保管庫」がある。リリスも鍵を持っていない</span></div></div>
+        <div class="fuse-step step-mid"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">中間ヒント</div><span class="fuse-step-ep">第18話</span> <span class="fuse-step-text">扉に王国の紋章と魔王家の紋章が並んで刻まれている</span></div></div>
+        <div class="fuse-step step-reveal"><div class="fuse-dot-wrap"><div class="fuse-dot"></div></div><div><div class="fuse-step-label">回収</div><span class="fuse-step-ep">第44話</span> <span class="fuse-step-text">中身は魔王と人間の王が交わした「共存条約」の原本</span></div></div>
+        <div class="fuse-related">🔗 関連：F-002, F-008の集約</div>
+      </div></div>
+    </div>
+
+    <div class="fuse-card">
+      <div class="fuse-header" onclick="toggle(this)">
+        <span class="fuse-id">F-005</span><span class="fuse-name">ガルドスの遺族年金</span>
+        <div class="fuse-badges"><span class="fuse-badge badge-char">キャラ</span><span class="fuse-badge badge-3">★★★</span></div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="fuse-body"><div class="fuse-content">
+        <div class="fuse-step step-hint"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">提示</div><span class="fuse-step-ep">第8話</span> <span class="fuse-step-text">ガルドスが部下の戦死報告を受けるとき、必ず「家族は」と聞く</span></div></div>
+        <div class="fuse-step step-mid"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">中間ヒント</div><span class="fuse-step-ep">第25話</span> <span class="fuse-step-text">ガルドスの私的口座から遺族への送金記録</span></div></div>
+        <div class="fuse-step step-reveal"><div class="fuse-dot-wrap"><div class="fuse-dot"></div></div><div><div class="fuse-step-label">回収</div><span class="fuse-step-ep">第36話</span> <span class="fuse-step-text">闇予算で遺族を支援。不正の理由は「仲間の家族を守るため」</span></div></div>
+        <div class="fuse-related">🔗 関連：F-007と対比</div>
+      </div></div>
+    </div>
+
+    <div class="fuse-card">
+      <div class="fuse-header" onclick="toggle(this)">
+        <span class="fuse-id">F-008</span><span class="fuse-name">共通敵「戦争経済」</span>
+        <div class="fuse-badges"><span class="fuse-badge badge-theme">核心テーマ</span><span class="fuse-badge badge-3">★★★</span></div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="fuse-body"><div class="fuse-content">
+        <div class="fuse-step step-hint"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">提示</div><span class="fuse-step-ep">第12話</span> <span class="fuse-step-text">「この戦争で一番儲けているのは、戦っていない奴らだ」</span></div></div>
+        <div class="fuse-step step-mid"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">中間ヒント</div><span class="fuse-step-ep">第30話</span> <span class="fuse-step-text">魔王軍と王国軍の武器が同じ商会から納入されている</span></div></div>
+        <div class="fuse-step step-reveal"><div class="fuse-dot-wrap"><div class="fuse-dot"></div></div><div><div class="fuse-step-label">回収</div><span class="fuse-step-ep">第45話</span> <span class="fuse-step-text">「大陸商会」が戦争を維持させていた。真の敵は帳簿で倒す</span></div></div>
+        <div class="fuse-related">🔗 関連：全伏線の集約点</div>
+      </div></div>
+    </div>
+
+    <div class="fuse-card">
+      <div class="fuse-header" onclick="toggle(this)">
+        <span class="fuse-id">F-010</span><span class="fuse-name">光司の「勇者の印」</span>
+        <div class="fuse-badges"><span class="fuse-badge badge-core">核心</span><span class="fuse-badge badge-3">★★★</span></div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="fuse-body"><div class="fuse-content">
+        <div class="fuse-step step-hint"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">提示</div><span class="fuse-step-ep">第1話</span> <span class="fuse-step-text">勇者の紋章が魔王討伐後も消えない</span></div></div>
+        <div class="fuse-step step-mid"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">中間ヒント</div><span class="fuse-step-ep">第26話</span> <span class="fuse-step-text">紋章が特定の帳簿に近づくと光る</span></div></div>
+        <div class="fuse-step step-reveal"><div class="fuse-dot-wrap"><div class="fuse-dot"></div></div><div><div class="fuse-step-label">回収</div><span class="fuse-step-ep">第46話</span> <span class="fuse-step-text">紋章は王国の追跡呪術。勇者は使い捨ての兵器だった</span></div></div>
+        <div class="fuse-related">🔗 関連：F-001, F-007の帰結</div>
+      </div></div>
+    </div>
+
+    <div class="fuse-card">
+      <div class="fuse-header" onclick="toggle(this)">
+        <span class="fuse-id">F-012</span><span class="fuse-name">年度末の「大決算」</span>
+        <div class="fuse-badges"><span class="fuse-badge badge-struct">構造</span><span class="fuse-badge badge-3">★★★</span></div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="fuse-body"><div class="fuse-content">
+        <div class="fuse-step step-hint"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">提示</div><span class="fuse-step-ep">第5話</span> <span class="fuse-step-text">経理部員たちが「大決算」を異常に恐れている</span></div></div>
+        <div class="fuse-step step-mid"><div class="fuse-dot-wrap"><div class="fuse-dot"></div><div class="fuse-line"></div></div><div><div class="fuse-step-label">中間ヒント</div><span class="fuse-step-ep">第27話</span> <span class="fuse-step-text">過去の大決算で「数字が合わなかった部署が消された」噂</span></div></div>
+        <div class="fuse-step step-reveal"><div class="fuse-dot-wrap"><div class="fuse-dot"></div></div><div><div class="fuse-step-label">回収</div><span class="fuse-step-ep">第41話</span> <span class="fuse-step-text">大決算を逆手に取り、全軍の前でガルドスの不正と大陸商会を暴く</span></div></div>
+        <div class="fuse-related">🔗 関連：全伏線の舞台装置。シリーズ「総務部」にも連動</div>
+      </div></div>
+    </div>
+  </section>
+
+  <section id="timeline">
+    <div class="section-label">章構成タイムライン</div>
+    <div class="tl-divider">── 第1章：採用面接 ──</div>
+    <div class="tl-item"><div class="tl-ep">#1</div><div class="tl-bar-wrap"><div class="tl-dot filled"></div><div class="tl-line-v"></div></div><div class="tl-content"><div class="tl-title">勇者、請求書を受け取る</div><div class="tl-desc">32億ゴルドの請求。魔王城への就職</div><div class="tl-fuse">F-001, F-010</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block"></div></div></div></div>
+    <div class="tl-item"><div class="tl-ep">#2</div><div class="tl-bar-wrap"><div class="tl-dot"></div><div class="tl-line-v"></div></div><div class="tl-content"><div class="tl-title">経理部へようこそ</div><div class="tl-desc">経理部の案内。金庫と部訓の紹介</div><div class="tl-fuse">F-003, F-011</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block"></div><div class="tl-heat-block"></div><div class="tl-heat-block"></div></div></div></div>
+    <div class="tl-item"><div class="tl-ep">#5</div><div class="tl-bar-wrap"><div class="tl-dot"></div><div class="tl-line-v"></div></div><div class="tl-content"><div class="tl-title">大決算という名の恐怖</div><div class="tl-desc">経理部の年中行事を知る</div><div class="tl-fuse">F-012</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block"></div><div class="tl-heat-block"></div></div></div></div>
+    <div class="tl-divider">── 第2章：新人研修 ──</div>
+    <div class="tl-item"><div class="tl-ep">#10</div><div class="tl-bar-wrap"><div class="tl-dot filled"></div><div class="tl-line-v"></div></div><div class="tl-content"><div class="tl-title">王国からの手紙</div><div class="tl-desc">アリアとの再会。王国側の異変</div><div class="tl-fuse">F-007</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block"></div></div></div></div>
+    <div class="tl-divider">── 第3章：初めての監査 ──</div>
+    <div class="tl-item"><div class="tl-ep">#20</div><div class="tl-bar-wrap"><div class="tl-dot filled"></div><div class="tl-line-v"></div></div><div class="tl-content"><div class="tl-title">消えた経費の行方</div><div class="tl-desc">勇者経費の内訳に不審点</div><div class="tl-fuse">F-001, F-004</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block"></div></div></div></div>
+    <div class="tl-item"><div class="tl-ep">#25</div><div class="tl-bar-wrap"><div class="tl-dot filled"></div><div class="tl-line-v"></div></div><div class="tl-content"><div class="tl-title">ガルドスの送金</div><div class="tl-desc">闇予算の真実に近づく</div><div class="tl-fuse">F-005</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div></div></div></div>
+    <div class="tl-divider">── 第4章：四天王の闇予算 ──</div>
+    <div class="tl-item"><div class="tl-ep">#30</div><div class="tl-bar-wrap"><div class="tl-dot filled"></div><div class="tl-line-v"></div></div><div class="tl-content"><div class="tl-title">同じ剣、同じ商人</div><div class="tl-desc">武器商会の存在に気づく</div><div class="tl-fuse">F-008</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div></div></div></div>
+    <div class="tl-item"><div class="tl-ep">#35</div><div class="tl-bar-wrap"><div class="tl-dot"></div><div class="tl-line-v"></div></div><div class="tl-content"><div class="tl-title">白い封筒の告発者</div><div class="tl-desc">リリスの師匠と前任部長の真実</div><div class="tl-fuse">F-006</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block"></div></div></div></div>
+    <div class="tl-divider">── 第5章：大決算 ──</div>
+    <div class="tl-item"><div class="tl-ep">#38</div><div class="tl-bar-wrap"><div class="tl-dot filled"></div><div class="tl-line-v"></div></div><div class="tl-content"><div class="tl-title">先代魔王の贈賄</div><div class="tl-desc">平和のための負債の全容</div><div class="tl-fuse">F-002 回収</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div></div></div></div>
+    <div class="tl-item"><div class="tl-ep">#41</div><div class="tl-bar-wrap"><div class="tl-dot filled"></div><div class="tl-line-v"></div></div><div class="tl-content"><div class="tl-title">大決算の日</div><div class="tl-desc">光司が全軍の前で不正を暴く</div><div class="tl-fuse">F-012 回収</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div></div></div></div>
+    <div class="tl-item"><div class="tl-ep">#45</div><div class="tl-bar-wrap"><div class="tl-dot filled"></div><div class="tl-line-v"></div></div><div class="tl-content"><div class="tl-title">帳簿で倒す</div><div class="tl-desc">大陸商会との最終対決</div><div class="tl-fuse">F-008 回収</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div></div></div></div>
+    <div class="tl-divider">── 最終章：新しい帳簿 ──</div>
+    <div class="tl-item"><div class="tl-ep">#46</div><div class="tl-bar-wrap"><div class="tl-dot filled"></div><div class="tl-line-v"></div></div><div class="tl-content"><div class="tl-title">勇者の印の真実</div><div class="tl-desc">光司の運命と王国の闇</div><div class="tl-fuse">F-010 回収</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div></div></div></div>
+    <div class="tl-item"><div class="tl-ep">#50</div><div class="tl-bar-wrap"><div class="tl-dot filled"></div></div><div class="tl-content"><div class="tl-title">新しい帳簿、最初の一頁</div><div class="tl-desc">魔王と勇者が新しい世界の会計を始める</div><div class="tl-fuse">全伏線完結</div><div class="tl-heat"><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div><div class="tl-heat-block on"></div></div></div></div>
+  </section>
+
+  <section id="series">
+    <div class="section-label">魔王城の部署シリーズ</div>
+    <table class="series-table">
+      <thead><tr><th>#</th><th>タイトル案</th><th>部署</th><th>主人公</th><th>状態</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>魔王と勇者の経理部</td><td>経理部</td><td>元勇者・光司</td><td><span class="status status-active">本作</span></td></tr>
+        <tr><td>2</td><td>魔王城の人事部は勇者を採用したい</td><td>人事部</td><td>元僧侶</td><td><span class="status status-plan">構想中</span></td></tr>
+        <tr><td>3</td><td>魔王軍・広報部の魔法プレゼン術</td><td>広報部</td><td>アリア（元魔法使い）</td><td><span class="status status-plan">構想中</span></td></tr>
+        <tr><td>4</td><td>補給部隊は今日も残業</td><td>兵站部</td><td>元盗賊</td><td><span class="status status-plan">構想中</span></td></tr>
+        <tr><td>5</td><td>魔王城・総務部の最終決算</td><td>総務部</td><td>全員集合</td><td><span class="status status-plan">完結編</span></td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:1rem;font-size:0.85rem;color:#666;background:#fff;border-radius:var(--radius);padding:1rem;box-shadow:var(--shadow);">
+      <strong>シリーズ設計</strong>：各作品は独立して読めるが、クロスオーバーキャラと「大決算」イベントで繋がる。完結編「総務部」で全視点が統合される羅生門方式。
+    </div>
+  </section>
+
+  <section id="selling">
+    <div class="section-label">セールスポイント</div>
+    <div class="sp-item"><strong>1. 剣ではなく電卓で戦う異世界もの</strong>──会計・監査が武器。「お仕事×異世界」のブルーオーシャン</div>
+    <div class="sp-item"><strong>2. 魔王×勇者のバディもの</strong>──敵同士がパートナーに。信頼関係の構築がエモい</div>
+    <div class="sp-item"><strong>3. 部署シリーズの拡張性</strong>──人事部・広報部・兵站部とスピンオフ展開可能</div>
+    <div class="sp-item"><strong>4. コメディ×シリアスの二層構造</strong>──表面はお仕事コメディ、底には戦争経済という社会派テーマ</div>
+    <div class="sp-item"><strong>5. 毎話の爽快感＋全体の陰謀</strong>──1話ごとに不正を暴く満足感と、長期の謎を両立</div>
+  </section>
+</div>
+<div class="footer">魔王と勇者の経理部 ── <a href="../" style="color:#aaa;">ポータルへ</a></div>
+<script>
+function toggle(el){el.nextElementSibling.classList.toggle('open');el.querySelector('.chevron').classList.toggle('open')}
+</script>
+</body>
+</html>
