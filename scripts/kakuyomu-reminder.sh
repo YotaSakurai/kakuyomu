@@ -88,7 +88,7 @@ CHAPTERS[24]="第3章「初めての監査」"
 CHAPTERS[25]="第3章「初めての監査」 ── 章完結"
 CHAPTERS[26]="第4章「四天王の闇予算」"
 CHAPTERS[27]="第4章「四天王の闇予算」"
-CHAPTERS[28]="第4章「四天王の闘予算」"
+CHAPTERS[28]="第4章「四天王の闇予算」"
 CHAPTERS[29]="第4章「四天王の闇予算」"
 CHAPTERS[30]="第4章「四天王の闇予算」"
 CHAPTERS[31]="第4章「四天王の闇予算」"
@@ -118,10 +118,14 @@ START_SEC=$(date -d "$START_DATE" +%s)
 TODAY_SEC=$(date -d "$TODAY" +%s)
 DAY_NUM=$(( (TODAY_SEC - START_SEC) / 86400 + 1 ))
 
+# スケジュール: Day1=ep01-05一括、Day2以降=ep(DAY_NUM+3)を1話ずつ
+# 全46日間（Day1で5話、Day2-46で45話）
+TOTAL_DAYS=46
+
 # 範囲外チェック
-if [ "$DAY_NUM" -lt 1 ] || [ "$DAY_NUM" -gt 50 ]; then
+if [ "$DAY_NUM" -lt 1 ] || [ "$DAY_NUM" -gt "$TOTAL_DAYS" ]; then
     # 投稿期間外 - 完結後のメッセージ
-    if [ "$DAY_NUM" -gt 50 ]; then
+    if [ "$DAY_NUM" -gt "$TOTAL_DAYS" ]; then
         curl -s -H "Content-Type: application/json" \
             -d "{\"content\": \"**【魔王と勇者の経理部】**\n全50話の投稿が完了しました！お疲れ様でした！\"}" \
             "$WEBHOOK_URL" > /dev/null
@@ -129,27 +133,91 @@ if [ "$DAY_NUM" -lt 1 ] || [ "$DAY_NUM" -gt 50 ]; then
     exit 0
 fi
 
-EP_NUM=$(printf "%02d" "$DAY_NUM")
-TITLE="${TITLES[$DAY_NUM]}"
-CHAPTER="${CHAPTERS[$DAY_NUM]}"
+# Day1は一括投稿、Day2以降は1話ずつ
+if [ "$DAY_NUM" -eq 1 ]; then
+    # 初日: ep01-05（第1章まるごと）
+    EP_START=1
+    EP_END=5
+    PUBLISHED=5
+    REMAINING=45
+    PROGRESS=$((PUBLISHED * 100 / 50))
+    BAR_FILLED=$((PUBLISHED / 2))
+    BAR_EMPTY=$((25 - BAR_FILLED))
+    PROGRESS_BAR=$(printf '%0.s█' $(seq 1 $BAR_FILLED))$(printf '%0.s░' $(seq 1 $BAR_EMPTY))
+
+    TITLES_LIST=""
+    FILES_LIST=""
+    for i in $(seq $EP_START $EP_END); do
+        EP_NUM=$(printf "%02d" "$i")
+        TITLES_LIST="${TITLES_LIST}第${i}話「${TITLES[$i]}」\n"
+        FILES_LIST="${FILES_LIST}\`ep${EP_NUM}.md\` "
+    done
+
+    PAYLOAD=$(cat <<EOF
+{
+  "embeds": [{
+    "title": "📖 カクヨム投稿リマインド",
+    "description": "**魔王と勇者の経理部**\n━━━━━━━━━━━━━━━",
+    "color": 3447003,
+    "fields": [
+      {
+        "name": "📝 今日の投稿（5話一括）",
+        "value": "${TITLES_LIST}${CHAPTERS[5]}",
+        "inline": false
+      },
+      {
+        "name": "📂 原稿ファイル",
+        "value": "${FILES_LIST}",
+        "inline": true
+      },
+      {
+        "name": "📊 進捗",
+        "value": "${PROGRESS_BAR} ${PUBLISHED}/50話 (${PROGRESS}%)",
+        "inline": false
+      },
+      {
+        "name": "✅ やること",
+        "value": "1. 作品を新規作成（ジャンル: 異世界ファンタジー）\n2. キャッチコピー・紹介文・タグを設定\n3. 第1章「採用面接」を作成\n4. 第1話〜第5話を投稿する\n5. 更新スケジュールを設定する",
+        "inline": false
+      }
+    ],
+    "footer": {
+      "text": "残り${REMAINING}話 | 連載開始日"
+    }
+  }]
+}
+EOF
+)
+
+    SPECIAL="\n\n🎉 **連載開始日です！** 第1章（5話）を一括投稿して、物語を始めましょう！"
+    CONTENT_PAYLOAD="{\"content\": \"${SPECIAL}\", \"embeds\": $(echo "$PAYLOAD" | python3 -c 'import sys,json; d=json.load(sys.stdin); print(json.dumps(d["embeds"]))')}"
+    curl -s -H "Content-Type: application/json" -d "$CONTENT_PAYLOAD" "$WEBHOOK_URL" > /dev/null
+    echo "[$(date)] Sent reminder for ep01-05 (bulk)"
+    exit 0
+fi
+
+# Day2以降: 1日1話（ep番号 = DAY_NUM + 3）
+EP_IDX=$((DAY_NUM + 3))
+EP_NUM=$(printf "%02d" "$EP_IDX")
+TITLE="${TITLES[$EP_IDX]}"
+CHAPTER="${CHAPTERS[$EP_IDX]}"
 FILE="$SERIES_DIR/ep${EP_NUM}.md"
-REMAINING=$((50 - DAY_NUM))
+PUBLISHED=$((EP_IDX))
+REMAINING=$((50 - PUBLISHED))
 
 # 進捗バー
-PROGRESS=$((DAY_NUM * 100 / 50))
-BAR_FILLED=$((DAY_NUM / 2))
+PROGRESS=$((PUBLISHED * 100 / 50))
+BAR_FILLED=$((PUBLISHED / 2))
 BAR_EMPTY=$((25 - BAR_FILLED))
 PROGRESS_BAR=$(printf '%0.s█' $(seq 1 $BAR_FILLED))$(printf '%0.s░' $(seq 1 $BAR_EMPTY))
 
 # 特別メッセージ
 SPECIAL=""
-if [ "$DAY_NUM" -eq 1 ]; then
-    SPECIAL="\n\n🎉 **連載開始日です！** 第1話を投稿して、物語を始めましょう！"
-elif [ "$DAY_NUM" -eq 50 ]; then
-    SPECIAL="\n\n🎊 **最終話です！** 50日間の連載、お疲れ様でした！"
-elif [[ "${CHAPTERS[$DAY_NUM]}" == *"章完結"* ]]; then
+if [ "$EP_IDX" -eq 50 ]; then
+    SPECIAL="\n\n🎊 **最終話です！** 連載お疲れ様でした！"
+elif [[ "${CHAPTERS[$EP_IDX]}" == *"章完結"* ]]; then
     SPECIAL="\n\n📕 **章の区切りです！** 近況ノートやSNSで振り返りを投稿すると効果的です。"
-elif [[ "${CHAPTERS[$DAY_NUM]}" == *"完結"* ]]; then
+elif [[ "${CHAPTERS[$EP_IDX]}" == *"完結"* ]]; then
     SPECIAL="\n\n🏆 **完結回です！** 感謝のメッセージを添えましょう。"
 fi
 
@@ -163,7 +231,7 @@ PAYLOAD=$(cat <<EOF
     "fields": [
       {
         "name": "📝 今日の投稿",
-        "value": "**第${DAY_NUM}話「${TITLE}」**\n${CHAPTER}",
+        "value": "**第${EP_IDX}話「${TITLE}」**\n${CHAPTER}",
         "inline": false
       },
       {
@@ -173,12 +241,12 @@ PAYLOAD=$(cat <<EOF
       },
       {
         "name": "📊 進捗",
-        "value": "${PROGRESS_BAR} ${DAY_NUM}/50話 (${PROGRESS}%)",
+        "value": "${PROGRESS_BAR} ${PUBLISHED}/50話 (${PROGRESS}%)",
         "inline": false
       },
       {
         "name": "✅ やること",
-        "value": "1. 原稿を最終確認する\n2. [カクヨム](https://kakuyomu.jp/)にログイン\n3. 第${DAY_NUM}話を投稿する\n4. タグ・キャッチコピーを確認する",
+        "value": "1. 原稿を最終確認する\n2. [カクヨム](https://kakuyomu.jp/)にログイン\n3. 第${EP_IDX}話を投稿する\n4. タグ・キャッチコピーを確認する",
         "inline": false
       }
     ],
