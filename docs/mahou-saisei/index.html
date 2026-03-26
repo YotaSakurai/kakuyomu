@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>〈仮題〉魔法社会のソロキャンパー ── カクヨム企画書</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f8f5f0;
+    --accent: #6b4c3b;
+    --accent-light: #a67c5b;
+    --red: #c0392b;
+    --blue: #2c5f7c;
+    --green: #3a7d5c;
+    --gold: #b8860b;
+    --purple: #6c3483;
+    --tag-bg: rgba(107,76,59,0.08);
+    --shadow: 0 2px 20px rgba(26,26,46,0.08);
+    --radius: 10px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Zen Kaku Gothic New', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.85; font-size: 15px; min-height: 100vh; }
+  .hero { background: linear-gradient(135deg, #1a1a2e 0%, #2c3e6b 50%, #4a3f5c 100%); color: #fff; padding: 3rem 1.5rem 2.5rem; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30h60M30 0v60' stroke='%23ffffff08' stroke-width='1'/%3E%3C/svg%3E"); opacity: 0.5; }
+  .hero-icon { font-size: 3rem; margin-bottom: 0.5rem; position: relative; }
+  .hero h1 { font-family: 'Noto Serif JP', serif; font-weight: 900; font-size: clamp(1.4rem, 5vw, 2rem); letter-spacing: 0.05em; position: relative; text-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+  .hero .subtitle { font-size: 0.85rem; opacity: 0.7; margin-top: 0.5rem; position: relative; }
+  .hero .back-link { position: relative; display: inline-block; margin-top: 1rem; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.8rem; }
+  .hero .back-link:hover { color: #fff; }
+  .nav { position: sticky; top: 0; z-index: 100; background: rgba(248,245,240,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(107,76,59,0.12); overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-inner { display: flex; gap: 0; padding: 0 0.5rem; max-width: 800px; margin: 0 auto; }
+  .nav a { display: block; padding: 0.75rem 1rem; text-decoration: none; color: var(--accent); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.03em; border-bottom: 2px solid transparent; transition: all 0.2s; flex-shrink: 0; }
+  .nav a:hover, .nav a:active { border-bottom-color: var(--accent); background: var(--tag-bg); }
+  .container { max-width: 800px; margin: 0 auto; padding: 0 1rem 4rem; }
+  section { margin-top: 2.5rem; }
+  .section-label { font-family: 'Noto Serif JP', serif; font-weight: 900; font-size: 1.2rem; color: var(--accent); border-left: 4px solid var(--accent); padding-left: 0.75rem; margin-bottom: 1.2rem; letter-spacing: 0.05em; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.8rem; }
+  .tag { background: var(--tag-bg); color: var(--accent); font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 100px; }
+  .synopsis { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.5rem; border: 1px solid rgba(107,76,59,0.06); font-size: 0.95rem; line-height: 2; color: #333; }
+  .synopsis .highlight { background: linear-gradient(transparent 60%, rgba(184,134,11,0.15) 60%); font-weight: 700; }
+  .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; margin-bottom: 1rem; border: 1px solid rgba(107,76,59,0.06); }
+  .placeholder { background: #fff; border: 2px dashed #ddd; border-radius: var(--radius); padding: 2rem; text-align: center; color: #aaa; font-size: 0.9rem; margin-bottom: 1rem; }
+  .footer { text-align: center; padding: 2rem 1rem; font-size: 0.75rem; color: #aaa; border-top: 1px solid #e8e4dc; margin-top: 3rem; }
+  @media (min-width: 600px) { .container { padding: 0 2rem 4rem; } }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-icon">📖</div>
+  <h1>〈仮題〉魔法社会のソロキャンパー</h1>
+  <div class="subtitle">カクヨム新連載 企画書</div>
+  <a class="back-link" href="../">← 連載一覧に戻る</a>
+</div>
+<nav class="nav"><div class="nav-inner">
+  <a href="#synopsis">あらすじ</a><a href="#characters">キャラ</a><a href="#structure">構成</a><a href="#foreshadow">伏線</a><a href="#selling">強み</a>
+</div></nav>
+<div class="container">
+  <section id="synopsis">
+    <div class="section-label">あらすじ</div>
+    <div class="synopsis">
+      <p>{{SYNOPSIS_HTML}}</p>
+    </div>
+    <div class="tags">
+      <!-- タグをここに追加: <span class="tag">タグ名</span> -->
+    </div>
+  </section>
+  <section id="characters">
+    <div class="section-label">主要キャラクター</div>
+    <div class="placeholder">キャラクター情報を追加してください</div>
+  </section>
+  <section id="structure">
+    <div class="section-label">文字数・構成ガイド</div>
+    <div class="placeholder">構成情報を追加してください</div>
+  </section>
+  <section id="foreshadow">
+    <div class="section-label">伏線管理テーブル</div>
+    <div class="placeholder">伏線情報を追加してください<br><small>（企画書を詰めたら、しにもどりの連載ページを参考に肉付けしてください）</small></div>
+  </section>
+  <section id="selling">
+    <div class="section-label">セールスポイント</div>
+    <div class="placeholder">セールスポイントを追加してください</div>
+  </section>
+</div>
+<div class="footer">カクヨム新連載 企画書 ── <a href="../" style="color:#aaa;">ポータルへ</a></div>
+</body>
+</html>
