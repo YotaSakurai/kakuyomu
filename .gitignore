@@ -1,0 +1,10 @@
+# 依存パッケージ
+node_modules/
+
+# 認証情報（絶対にコミットしない）
+.kakuyomu-auth/
+.env
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,15 @@
+{
+  "name": "kakuyomu-manager",
+  "version": "1.0.0",
+  "private": true,
+  "description": "カクヨム連載管理 & 自動アップロード",
+  "scripts": {
+    "upload": "npx tsx scripts/upload.ts",
+    "upload:dry": "npx tsx scripts/upload.ts --dry-run"
+  },
+  "dependencies": {
+    "playwright": "^1.50.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

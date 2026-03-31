@@ -1,0 +1,15 @@
+{
+  "$schema": "./kakuyomu.config.schema.json",
+  "series": {
+    "shinimodori": {
+      "title": "死に戻りの図書館司書は、世界の終わりを何度でも書き換える",
+      "workId": "ここにカクヨムの作品IDを入力（URLの数字部分）",
+      "episodesDir": "series/shinimodori/episodes"
+    },
+    "maou-yuusha": {
+      "title": "魔王と勇者の経理部 ─ 剣と魔法より電卓が強い件について ─",
+      "workId": "ここにカクヨムの作品IDを入力（URLの数字部分）",
+      "episodesDir": "series/maou-yuusha/episodes"
+    }
+  }
+}

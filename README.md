@@ -16,13 +16,22 @@
 kakuyomu/
 ├── README.md                          ← このファイル（ポータル）
 ├── create_series.sh                   ← 新連載ワンコマンド作成
+├── kakuyomu.config.json               ← カクヨム作品ID設定
+├── package.json                       ← Node.js 依存管理
+├── scripts/
+│   ├── upload.ts                      ← Playwright自動アップロード
+│   └── upload.sh                      ← アップロードCLI
 ├── docs/                              ← GitHub Pages（自動生成）
 │   ├── index.html                     ← ポータルHTML
 │   └── <series-id>/index.html         ← 各連載の企画書HTML
 ├── series/                            ← 連載データ
 │   └── <series-id>/
 │       ├── README.md                  ← 企画書（Markdown）
-│       └── foreshadowing.xlsx         ← 伏線管理（Excel）
+│       ├── foreshadowing.xlsx         ← 伏線管理（Excel）
+│       └── episodes/                  ← エピソード本文（.txt）
+│           ├── 01.txt
+│           ├── 02.txt
+│           └── ...
 └── templates/                         ← テンプレート
     ├── README.template.md             ← 企画書テンプレート
     ├── index.template.html            ← HTMLテンプレート
@@ -48,6 +57,64 @@ kakuyomu/
 - `docs/<series-id>/index.html` -- GitHub Pages用HTML
 
 生成後、各ファイルの `{{PLACEHOLDER}}` 部分を実際の内容に書き換えてください。
+
+## カクヨムへの自動アップロード
+
+Playwright（ブラウザ自動化）を使って、エピソードをカクヨムに自動アップロードできます。
+
+### セットアップ
+
+```bash
+# 1. 依存パッケージのインストール
+npm install
+
+# 2. Playwright ブラウザのインストール
+npx playwright install chromium
+
+# 3. 環境変数の設定
+export KAKUYOMU_EMAIL='your@email.com'
+export KAKUYOMU_PASSWORD='your-password'
+
+# 4. kakuyomu.config.json にカクヨムの作品IDを設定
+#    作品ID: カクヨムURL https://kakuyomu.jp/works/XXXXXXXX の数字部分
+```
+
+### エピソードファイルの書き方
+
+`series/<series-id>/episodes/01.txt` のように配置します。
+
+```
+# 第一話 タイトル
+
+ここから本文が始まります。
+1行目（# 付き or なし）がタイトル、空行のあとが本文です。
+```
+
+### アップロード
+
+```bash
+# 下書き保存（デフォルト）
+./scripts/upload.sh shinimodori 01 --draft
+
+# 一括アップロード（第1話〜第5話）
+./scripts/upload.sh shinimodori 01-05 --draft
+
+# 公開
+./scripts/upload.sh maou-yuusha 01 --publish
+
+# ドライラン（内容確認のみ、実際にはアップロードしない）
+./scripts/upload.sh shinimodori 01 --dry-run
+
+# ブラウザを表示してデバッグ
+./scripts/upload.sh shinimodori 01 --draft --headed
+```
+
+### 注意事項
+
+- 初回実行時にカクヨムへのログインが必要です（認証情報は `.kakuyomu-auth/` に保存され、次回以降は不要）
+- `.kakuyomu-auth/` と `.env` は `.gitignore` に含まれており、コミットされません
+- カクヨムのUI変更があった場合は `scripts/upload.ts` のセレクタ調整が必要です
+- `--headed` オプションでブラウザの動作を目視確認できます
 
 ## GitHub Pages
 
