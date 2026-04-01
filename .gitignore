@@ -4,6 +4,9 @@ node_modules/
 # 認証情報（絶対にコミットしない）
 .kakuyomu-auth/
 .env
+scripts/.kakuyomu-cookies.json
+scripts/.kakuyomu-config.json
+scripts/post.log
 
 # OS
 .DS_Store
