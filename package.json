@@ -6,7 +6,8 @@
   "scripts": {
     "post": "node scripts/kakuyomu-post.mjs",
     "post:dry": "node scripts/kakuyomu-post.mjs --dry-run",
-    "post:login": "node scripts/kakuyomu-post.mjs --login --headed"
+    "post:login": "node scripts/kakuyomu-post.mjs --login --headed",
+    "setup": "node scripts/kakuyomu-post.mjs --setup"
   },
   "dependencies": {
     "playwright": "^1.59.0"

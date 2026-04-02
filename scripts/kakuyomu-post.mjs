@@ -200,6 +200,21 @@ function saveConfig(config) {
 }
 
 /**
+ * ユーザーのキー入力を待機
+ */
+function waitForEnter(message) {
+  return new Promise(resolve => {
+    process.stdout.write(message || 'Enterキーを押してください...');
+    process.stdin.setRawMode?.(false);
+    process.stdin.resume();
+    process.stdin.once('data', () => {
+      process.stdin.pause();
+      resolve();
+    });
+  });
+}
+
+/**
  * コマンドライン引数の解析
  */
 function parseArgs() {
@@ -209,6 +224,7 @@ function parseArgs() {
     dryRun: false,
     loginOnly: false,
     headed: false,
+    setup: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -229,6 +245,10 @@ function parseArgs() {
         opts.loginOnly = true;
         break;
       case '--headed':
+        opts.headed = true;
+        break;
+      case '--setup':
+        opts.setup = true;
         opts.headed = true;
         break;
     }
@@ -287,11 +307,10 @@ async function main() {
 
     if (!opts.headed) {
       console.log('');
-      console.log('初回ログインは --headed オプション付きで実行してください:');
-      console.log('  node scripts/kakuyomu-post.mjs --login --headed');
+      console.log('初回セットアップは --setup で実行してください:');
+      console.log('  node scripts/kakuyomu-post.mjs --setup');
       console.log('');
-      console.log('ブラウザが開くので、手動でログインしてください。');
-      console.log('ログイン完了後、Cookieが自動保存されます。');
+      console.log('ブラウザが開くので、ログイン→作品作成まで行えます。');
       await browser.close();
       process.exit(1);
     }
@@ -302,11 +321,33 @@ async function main() {
 
     console.log('');
     console.log('=== ブラウザでログインしてください ===');
-    console.log('ログイン完了後、マイページに遷移するのを待っています...');
+    console.log('Google / Apple / メール、どの方法でもOKです。');
+    console.log('ログイン後、自動で検出します。（最大5分待機）');
     console.log('');
 
-    // マイページへの遷移を待機（最大5分）
-    await page.waitForURL('**/my**', { timeout: 300000 });
+    // ログイン完了を待機（URLがloginを含まなくなるまで）
+    try {
+      await page.waitForFunction(
+        () => !window.location.href.includes('/login'),
+        { timeout: 300000 }
+      );
+    } catch {
+      // URLベースの検出に失敗した場合、Enterキーで手動通知
+      console.log('自動検出できませんでした。ログイン完了後、ここでEnterを押してください。');
+      await waitForEnter('');
+    }
+
+    // マイページに遷移して確認
+    await page.goto('https://kakuyomu.jp/my');
+    await page.waitForLoadState('networkidle');
+
+    const afterLoginUrl = page.url();
+    if (afterLoginUrl.includes('/login')) {
+      console.log('ログインに失敗しました。もう一度試してください。');
+      await browser.close();
+      process.exit(1);
+    }
+
     console.log('ログイン成功！');
 
     // Cookie保存
@@ -330,15 +371,42 @@ async function main() {
     await page.waitForLoadState('networkidle');
 
     // 作品リンクを取得
-    const workLinks = await page.$$eval('a[href*="/my/works/"]', links =>
+    let workLinks = await page.$$eval('a[href*="/my/works/"]', links =>
       links.filter(a => a.href.match(/\/my\/works\/\d+$/))
         .map(a => ({ id: a.href.match(/\/my\/works\/(\d+)$/)?.[1], text: a.textContent.trim() }))
     );
 
     if (workLinks.length === 0) {
-      console.log('作品が見つかりません。先にカクヨムで作品を作成してください。');
-      await browser.close();
-      process.exit(1);
+      if (opts.headed || opts.setup) {
+        console.log('');
+        console.log('=== 作品がまだありません ===');
+        console.log('ブラウザで「魔王と勇者の経理部」を新規作成してください。');
+        console.log('  1. 「新しい小説を作る」をクリック');
+        console.log('  2. タイトル・ジャンル・紹介文を入力');
+        console.log('  3. 作成完了後、ここでEnterを押してください。');
+        console.log('');
+
+        await waitForEnter('作品を作成したらEnterを押してください...\n');
+
+        // 再取得
+        await page.goto('https://kakuyomu.jp/my/works');
+        await page.waitForLoadState('networkidle');
+        workLinks = await page.$$eval('a[href*="/my/works/"]', links =>
+          links.filter(a => a.href.match(/\/my\/works\/\d+$/))
+            .map(a => ({ id: a.href.match(/\/my\/works\/(\d+)$/)?.[1], text: a.textContent.trim() }))
+        );
+
+        if (workLinks.length === 0) {
+          console.log('作品が見つかりません。URLを確認してもう一度試してください。');
+          await browser.close();
+          process.exit(1);
+        }
+      } else {
+        console.log('作品が見つかりません。--setup で初回セットアップしてください:');
+        console.log('  node scripts/kakuyomu-post.mjs --setup');
+        await browser.close();
+        process.exit(1);
+      }
     }
 
     // 「魔王と勇者の経理部」を探す or 最初の作品を使用
