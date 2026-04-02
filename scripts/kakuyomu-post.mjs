@@ -94,16 +94,57 @@ function extractBody(epNum) {
 }
 
 /**
- * 今日投稿すべきエピソード番号を計算
+ * 日付からその日までに投稿すべき最大エピソード番号を計算
  */
-function getTodayEpisodes() {
+function getMaxEpisodeForToday() {
   const today = new Date();
   const start = new Date(START_DATE);
   const dayNum = Math.floor((today - start) / 86400000) + 1;
 
-  if (dayNum === 1) return { episodes: [1, 2, 3, 4, 5], dayNum };
-  if (dayNum < 1 || dayNum > 46) return { episodes: [], dayNum };
-  return { episodes: [dayNum + 3], dayNum };
+  if (dayNum < 1) return { maxEp: 0, dayNum };
+  if (dayNum === 1) return { maxEp: 5, dayNum };
+  if (dayNum > 46) return { maxEp: 50, dayNum };
+  return { maxEp: dayNum + 3, dayNum };
+}
+
+/**
+ * 今日投稿すべきエピソード番号を計算（未投稿分を含む）
+ */
+function getTodayEpisodes(config) {
+  const { maxEp, dayNum } = getMaxEpisodeForToday();
+  if (maxEp === 0) return { episodes: [], dayNum };
+
+  // 投稿済みエピソードを取得
+  const posted = config.postedEpisodes || [];
+  const lastPosted = posted.length > 0 ? Math.max(...posted) : 0;
+
+  // 未投稿分をすべてリストアップ（漏れ分も含む）
+  const episodes = [];
+  for (let ep = 1; ep <= maxEp; ep++) {
+    if (!posted.includes(ep)) {
+      episodes.push(ep);
+    }
+  }
+
+  if (episodes.length > 0 && lastPosted < maxEp) {
+    const missed = episodes.length - (maxEp === 5 ? 5 : 1);
+    if (missed > 0) {
+      console.log(`⚠️ 未投稿のエピソードが${missed}話あります。まとめて投稿します。`);
+    }
+  }
+
+  return { episodes, dayNum };
+}
+
+/**
+ * 投稿済みエピソードを記録
+ */
+function markAsPosted(config, epNum) {
+  if (!config.postedEpisodes) config.postedEpisodes = [];
+  if (!config.postedEpisodes.includes(epNum)) {
+    config.postedEpisodes.push(epNum);
+    config.postedEpisodes.sort((a, b) => a - b);
+  }
 }
 
 /**
@@ -169,10 +210,10 @@ async function main() {
   if (opts.episodes) {
     episodes = opts.episodes;
   } else if (!opts.loginOnly) {
-    const today = getTodayEpisodes();
+    const today = getTodayEpisodes(config);
     episodes = today.episodes;
     if (episodes.length === 0) {
-      console.log('今日は投稿予定がありません。');
+      console.log('今日は投稿予定がありません（全話投稿済み or 開始前）。');
       return;
     }
     console.log(`今日の投稿: ${episodes.map(e => `第${e}話`).join(', ')}`);
@@ -337,6 +378,10 @@ async function main() {
       // 遷移を待つ
       await page.waitForLoadState('networkidle');
       console.log(`✅ 第${epNum}話「${title}」を投稿しました。`);
+
+      // 投稿済みとして記録
+      markAsPosted(config, epNum);
+      saveConfig(config);
     } else {
       console.error(`第${epNum}話: 公開ボタンが見つかりません。`);
     }
