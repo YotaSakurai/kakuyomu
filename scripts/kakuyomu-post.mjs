@@ -137,6 +137,44 @@ function getTodayEpisodes(config) {
 }
 
 /**
+ * カクヨム上の投稿済みエピソードを取得し、ローカル記録と同期
+ */
+async function syncPostedEpisodes(page, config, workId) {
+  console.log('カクヨムの投稿状況を確認中...');
+  await page.goto(`https://kakuyomu.jp/my/works/${workId}`);
+  await page.waitForLoadState('networkidle');
+
+  // 作品ページからエピソードタイトル一覧を取得
+  const publishedTitles = await page.$$eval(
+    'a[href*="/episodes/"]',
+    links => links.map(a => a.textContent.trim())
+  );
+
+  // タイトルを照合して投稿済みエピソード番号を特定
+  const postedOnSite = [];
+  for (const [epStr, title] of Object.entries(TITLES)) {
+    const epNum = Number(epStr);
+    if (publishedTitles.some(t => t.includes(title))) {
+      postedOnSite.push(epNum);
+    }
+  }
+
+  // ローカル記録と統合（カクヨム側にあるものを追加）
+  if (!config.postedEpisodes) config.postedEpisodes = [];
+  for (const ep of postedOnSite) {
+    if (!config.postedEpisodes.includes(ep)) {
+      config.postedEpisodes.push(ep);
+    }
+  }
+  config.postedEpisodes.sort((a, b) => a - b);
+
+  const count = config.postedEpisodes.length;
+  console.log(`投稿済み: ${count}話 (${count > 0 ? config.postedEpisodes.join(',') : 'なし'})`);
+
+  return config.postedEpisodes;
+}
+
+/**
  * 投稿済みエピソードを記録
  */
 function markAsPosted(config, epNum) {
@@ -311,6 +349,22 @@ async function main() {
   }
 
   const WORK_ID = config.workId;
+
+  // カクヨム上の投稿状況と同期
+  await syncPostedEpisodes(page, config, WORK_ID);
+  saveConfig(config);
+
+  // --ep指定がない場合、同期後の状態で未投稿リストを再計算
+  if (!opts.episodes) {
+    const today = getTodayEpisodes(config);
+    episodes = today.episodes;
+    if (episodes.length === 0) {
+      console.log('今日までの分はすべて投稿済みです。');
+      await browser.close();
+      return;
+    }
+    console.log(`投稿対象: ${episodes.map(e => `第${e}話`).join(', ')}`);
+  }
 
   // エピソード投稿
   for (const epNum of episodes) {
