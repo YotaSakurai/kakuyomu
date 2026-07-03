@@ -11,3 +11,4 @@ scripts/post.log
 # OS
 .DS_Store
 Thumbs.db
+scripts/reminder.log
