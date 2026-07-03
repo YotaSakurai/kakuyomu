@@ -4,6 +4,12 @@
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 LOG_FILE="$SCRIPT_DIR/post.log"
+
+# cron環境ではnvmのnodeがPATHにないため解決する
+if ! command -v node >/dev/null 2>&1; then
+    NODE_BIN=$(ls -d "$HOME/.nvm/versions/node"/*/bin 2>/dev/null | sort -V | tail -1)
+    [ -n "$NODE_BIN" ] && export PATH="$NODE_BIN:$PATH"
+fi
 WEBHOOK_URL="https://discord.com/api/webhooks/1485155140271997061/n1dNphS4C3fnKu9hN7DjHyQNHna3Hrb4FhHFZGJbF4Z1152h-oWrSmbxQ8-4_XgobIWE"
 
 echo "[$(date)] === 日次投稿開始 ===" >> "$LOG_FILE"
